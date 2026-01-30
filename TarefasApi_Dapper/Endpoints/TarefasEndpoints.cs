@@ -21,6 +21,24 @@ namespace TarefasApi_Dapper.Endpoints
                 return Results.Ok(tarefas);
             });
 
+            app.MapGet("/tarefas/{id}", async (GetConnection connectionGetter, int id) =>
+            {
+                using var con = await connectionGetter();
+                //var tarefa = con.Get<Tarefa>(id);
+                //if (tarefa is null)
+                //    return Results.NotFound();
+                //return Results.Ok(tarefa);
+
+                return con.Get<Tarefa>(id) is Tarefa tarefa ? Results.Ok(tarefa) : Results.NotFound();
+            });
+
+            app.MapPost("/tarefas", async (GetConnection connectionGetter, Tarefa Tarefa) =>
+            {
+                using var con = await connectionGetter();
+                var id = con.Insert(Tarefa);
+                return Results.Created($"/tarefas/{id}", Tarefa);
+            });
+
         }
     }
 }
